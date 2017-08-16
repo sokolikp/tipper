@@ -21,12 +21,15 @@ class TipViewController: UIViewController {
     // TODO: make these global/shared between controllers 
     let TIP_SEGMENTS_KEY = "tip_percent_segments"
     let DEFAULT_TIP_INDEX_KEY = "default_tip_index"
+    let LAST_BILL_AMOUNT_KEY = "last_bill_amount"
+    let LAST_BILL_TIMESTAMP_KEY = "last_bill_timestamp"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         billField.becomeFirstResponder()
         initSegments()
         initTipSelection()
+        initBillAmount()
     }
 
     override func didReceiveMemoryWarning() {
@@ -38,6 +41,25 @@ class TipViewController: UIViewController {
         initSegments()
         initTipSelection()
         calculateTip(nil)
+    }
+    
+    func initBillAmount () {
+        // pull timestamp and last value out of defaults
+        let lastBillAmount = defaults.object(forKey: LAST_BILL_AMOUNT_KEY) as? Double
+        let lastBillTimestamp = defaults.object(forKey: LAST_BILL_TIMESTAMP_KEY) as? Date
+        
+        // check if values exist
+        if (lastBillTimestamp != nil && lastBillAmount != nil) {
+            let difference = Calendar.current.dateComponents([.minute], from: lastBillTimestamp!, to: Date())
+        
+            // use the value if it was created in the last 10 mintes; 
+            // otherwise, delete the old key data
+            if (difference.minute! < 10) {
+                billField.text = String(lastBillAmount!)
+            } else {
+                defaults.removeObject(forKey: LAST_BILL_AMOUNT_KEY)
+            }
+        }
     }
     
     func initSegments () {
@@ -61,12 +83,18 @@ class TipViewController: UIViewController {
     }
     
     @IBAction func calculateTip(_ sender: Any?) {
+        // calculate bill
         let bill = Double(billField.text!) ?? 0
         let tip = bill * currentTipSegments[tipSegmentedControl.selectedSegmentIndex]
         let total = bill + tip
         
+        // display bill value
         tipLabel.text = String(format: "$%.2f", tip)
         totalLabel.text = String(format: "$%.2f", total)
+        
+        // save bill amount to defaults
+        defaults.set(bill, forKey: LAST_BILL_AMOUNT_KEY)
+        defaults.set(Date(), forKey: LAST_BILL_TIMESTAMP_KEY)
     }
     
 }
