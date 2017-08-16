@@ -55,7 +55,7 @@ class TipViewController: UIViewController {
             // use the value if it was created in the last 10 mintes; 
             // otherwise, delete the old key data
             if (difference.minute! < 10) {
-                billField.text = String(lastBillAmount!)
+                billField.text = lastBillAmount! != Double(0) ? String(format: "%.0f",lastBillAmount!) : ""
             } else {
                 defaults.removeObject(forKey: LAST_BILL_AMOUNT_KEY)
             }
@@ -89,12 +89,16 @@ class TipViewController: UIViewController {
         let total = bill + tip
         
         // display bill value
-        tipLabel.text = String(format: "$%.2f", tip)
-        totalLabel.text = String(format: "$%.2f", total)
+        let formatter = NumberFormatter()
+        formatter.numberStyle = NumberFormatter.Style.currency
+        formatter.maximumFractionDigits = 2;
+        tipLabel.text = formatter.string(from: NSNumber(value: tip))
+        totalLabel.text = formatter.string(from: NSNumber(value: total))
         
         // save bill amount to defaults
-        defaults.set(bill, forKey: LAST_BILL_AMOUNT_KEY)
+        defaults.set(Double(bill), forKey: LAST_BILL_AMOUNT_KEY)
         defaults.set(Date(), forKey: LAST_BILL_TIMESTAMP_KEY)
+        defaults.synchronize()
     }
     
 }
