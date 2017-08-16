@@ -24,6 +24,7 @@ class TipViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        billField.becomeFirstResponder()
         initSegments()
         initTipSelection()
     }
