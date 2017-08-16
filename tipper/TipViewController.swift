@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  TipViewController.swift
 //  tipper
 //
 //  Created by Paul Sokolik on 8/13/17.
@@ -17,13 +17,14 @@ class TipViewController: UIViewController {
     
     let defaultSegments: [Int] = [18, 20, 25]
     let defaults = UserDefaults.standard
+    var currentTipSegments = [Double]()
     // TODO: make these global/shared between controllers 
     let TIP_SEGMENTS_KEY = "tip_percent_segments"
     let DEFAULT_TIP_INDEX_KEY = "default_tip_index"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        initSegmentsText()
+        initSegments()
         initTipSelection()
     }
 
@@ -33,16 +34,19 @@ class TipViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        initSegmentsText()
+        initSegments()
         initTipSelection()
+        calculateTip(nil)
     }
     
-    func initSegmentsText () {
+    func initSegments () {
         let userSegments = defaults.array(forKey: TIP_SEGMENTS_KEY) as? [Int] ?? [Int]()
-        let tipCollection = userSegments.isEmpty ? defaultSegments : userSegments
+        let tipColletion = userSegments.isEmpty ? defaultSegments : userSegments
         
-        for(index, tip) in tipCollection.enumerated() {
+        for(index, tip) in tipColletion.enumerated() {
+            // set both segment text and the global [double] tip collection to use for calculation
             tipSegmentedControl.setTitle(String(tip) + "%", forSegmentAt: index)
+            currentTipSegments.append(Double(tip) / Double(100))
         }
     }
     
@@ -55,10 +59,9 @@ class TipViewController: UIViewController {
         view.endEditing(true)
     }
     
-    @IBAction func calculateTip(_ sender: Any) {
-        let tipSelection = [0.18, 0.2, 0.25]
+    @IBAction func calculateTip(_ sender: Any?) {
         let bill = Double(billField.text!) ?? 0
-        let tip = bill * tipSelection[tipSegmentedControl.selectedSegmentIndex]
+        let tip = bill * currentTipSegments[tipSegmentedControl.selectedSegmentIndex]
         let total = bill + tip
         
         tipLabel.text = String(format: "$%.2f", tip)
