@@ -27,8 +27,6 @@ class TipViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         billField.becomeFirstResponder()
-        initSegments()
-        initTipSelection()
         initBillAmount()
     }
 
@@ -63,8 +61,9 @@ class TipViewController: UIViewController {
     }
     
     func initSegments () {
-        let userSegments = defaults.array(forKey: TIP_SEGMENTS_KEY) as? [Int] ?? [Int]()
-        let tipColletion = userSegments.isEmpty ? defaultSegments : userSegments
+        let userSegments = defaults.array(forKey: TIP_SEGMENTS_KEY) as? [Int]
+        let tipColletion = userSegments!.isEmpty ? defaultSegments : userSegments!
+        currentTipSegments = []
         
         for(index, tip) in tipColletion.enumerated() {
             // set both segment text and the global [double] tip collection to use for calculation
