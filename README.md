@@ -42,8 +42,11 @@ Outlets and actions are basically ways to tie a UI element to a variable or func
 
 **Question 2**: "Swift uses [Automatic Reference Counting](https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID49) (ARC), which is not a garbage collector, to manage memory. Can you explain how you can get a strong reference cycle for closures? (There's a section explaining this concept in the link, how would you summarize as simply as possible?)"
 
-**Answer:** 
+**Answer:** It's first helfpul to understand that in Swift, strong reference cycles can be formed between class instances when you create a class instance with a property that references another class instance. For example, a strong reference cycle could be created between Book and Author instances (author points to a book and vice versa). These are bad in Swift because ARC won't deinitialize any variables in memory that have strong references, so if you have enough of these instances you'll create memory problems.
 
+A strong reference cycle for closures is the same idea, but between closures and class instances. A class instance could contain a closure/function that executes some code (and therefore have a strong reference to the closure), and that closure could reference the instance via `self`. When that happens, ARC won't deinitialize the objects, even when one is set to nil.
+
+Strong reference cycles can be prevented in Swift by using `weak` and `unowned` keywords to control what types of references are created. In strong cycle references for closures, `weak` and `unowned` keywords are used when defining a capture list to control the references.
 
 ## License
 
