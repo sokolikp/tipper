@@ -89,6 +89,8 @@ class TipViewController: UIViewController {
         
         // display bill value
         let formatter = NumberFormatter()
+        formatter.usesGroupingSeparator = true
+        formatter.locale = NSLocale.current
         formatter.numberStyle = NumberFormatter.Style.currency
         formatter.maximumFractionDigits = 2;
         tipLabel.text = formatter.string(from: NSNumber(value: tip))
