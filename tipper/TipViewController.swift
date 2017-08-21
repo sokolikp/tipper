@@ -14,10 +14,13 @@ class TipViewController: UIViewController {
     @IBOutlet weak var totalLabel: UILabel!
     @IBOutlet weak var billField: UITextField!
     @IBOutlet weak var tipSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var tipDescriptionLabel: UILabel!
+    @IBOutlet weak var totalDescriptionLabel: UILabel!
     
     let defaultSegments: [Int] = [18, 20, 25]
     let defaults = UserDefaults.standard
     var currentTipSegments = [Double]()
+    
     // TODO: make these global/shared between controllers 
     let TIP_SEGMENTS_KEY = "tip_percent_segments"
     let DEFAULT_TIP_INDEX_KEY = "default_tip_index"
@@ -26,6 +29,7 @@ class TipViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         billField.becomeFirstResponder()
         initBillAmount()
     }
@@ -79,6 +83,32 @@ class TipViewController: UIViewController {
 
     @IBAction func onTap(_ sender: Any) {
         view.endEditing(true)
+    }
+    
+    @IBAction func onTypeTextField(_ sender: Any) {
+        let currentPosition = billField.center.y
+        print(currentPosition)
+        
+        // animate down
+        if (billField.text == "" && currentPosition < 250) {
+            UIView.animate(withDuration: 0.5) {
+                self.billField.center.y += 200
+                self.tipLabel.center.y += 200
+                self.totalLabel.center.y += 200
+                self.tipSegmentedControl.center.y += 200
+                self.tipDescriptionLabel.center.y += 200
+                self.totalDescriptionLabel.center.y += 200
+            }
+        } else if (billField.text != "" && currentPosition > 250) { // animate up
+            UIView.animate(withDuration: 0.5) {
+                self.billField.center.y -= 200
+                self.tipLabel.center.y -= 200
+                self.totalLabel.center.y -= 200
+                self.tipSegmentedControl.center.y -= 200
+                self.tipDescriptionLabel.center.y -= 200
+                self.totalDescriptionLabel.center.y -= 200
+            }
+        }
     }
     
     @IBAction func calculateTip(_ sender: Any?) {
