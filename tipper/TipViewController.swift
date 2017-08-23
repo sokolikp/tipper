@@ -87,12 +87,11 @@ class TipViewController: UIViewController {
     
     @IBAction func onTypeTextField(_ sender: Any) {
         let currentPosition = billField.center.y
-        print(currentPosition)
         
         // animate down
         if (billField.text == "" && currentPosition < 250) {
             UIView.animate(withDuration: 0.5) {
-                self.billField.center.y += 200
+                self.billField.center.y += 150
                 self.tipLabel.center.y += 200
                 self.totalLabel.center.y += 200
                 self.tipSegmentedControl.center.y += 200
@@ -101,7 +100,7 @@ class TipViewController: UIViewController {
             }
         } else if (billField.text != "" && currentPosition > 250) { // animate up
             UIView.animate(withDuration: 0.5) {
-                self.billField.center.y -= 200
+                self.billField.center.y -= 150
                 self.tipLabel.center.y -= 200
                 self.totalLabel.center.y -= 200
                 self.tipSegmentedControl.center.y -= 200
